@@ -3,8 +3,8 @@
 import type {
     NumericParametersIds,
     SettingNumber
-} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.3';
-import { Logger } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.3';
+} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4';
+import { Logger } from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4';
 import { SettingUIBase } from './SettingUIBase';
 
 /**
@@ -77,7 +77,7 @@ export class SettingUINumber<
             this.spinner.onchange = (event: Event) => {
                 const inputElem = event.target as HTMLInputElement;
 
-                const parsedValue = Number.parseInt(inputElem.value);
+                const parsedValue = Number.parseFloat(inputElem.value);
 
                 if (Number.isNaN(parsedValue)) {
                     Logger.Warning(

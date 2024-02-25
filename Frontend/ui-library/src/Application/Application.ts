@@ -8,7 +8,7 @@ import {
     LatencyTestResults,
     InitialSettings,
     MessageStreamerList
-} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.3';
+} from '@epicgames-ps/lib-pixelstreamingfrontend-ue5.4';
 import { OverlayBase } from '../Overlay/BaseOverlay';
 import { ActionOverlay } from '../Overlay/ActionOverlay';
 import { TextOverlay } from '../Overlay/TextOverlay';
@@ -33,7 +33,7 @@ import {
 import { FullScreenIconBase, FullScreenIconExternal } from '../UI/FullscreenIcon';
 import {
     DataChannelLatencyTestResult
-} from "@epicgames-ps/lib-pixelstreamingfrontend-ue5.3/types/DataChannel/DataChannelLatencyTestResults";
+} from "@epicgames-ps/lib-pixelstreamingfrontend-ue5.4/types/DataChannel/DataChannelLatencyTestResults";
 
 
 /** 
@@ -378,6 +378,58 @@ export class Application {
             ({ data: { count }}) => 
                 this.onPlayerCount(count)
         );
+        this.stream.addEventListener(
+            'webRtcTCPRelayDetected', 
+            ({}) => 
+                Logger.Warning(
+                    Logger.GetStackTrace(),
+                    `Stream quailty degraded due to network enviroment, stream is relayed over TCP.`
+               )
+        );
+        this.stream.addResponseEventListener("handle_responses", (response: string) => {
+            console.log("Response Recieved");
+
+            // Parse the response string as JSON to access its properties
+            const parsedResponse = JSON.parse(response);
+            const responseMode = parsedResponse["mode"];
+
+            // Ensure that the switch cases are correctly separated and actions are properly defined
+            switch(responseMode) {
+                case "download_by_link":
+                    // Handle the case for "download_by_link"
+                    const responseLink = parsedResponse["link"];
+                    console.log("Download link received:", responseLink);
+
+                    // Create a function to trigger the download
+                    const triggerDownload = (downloadUrl: string) => {
+                        // Create an anchor element
+                        const anchorElement = document.createElement('a');
+                        anchorElement.href = downloadUrl;
+
+                        // Optional: Provide a default file name for the download
+                        // This attribute can be omitted or customized based on the file being downloaded
+                        anchorElement.download = "downloadedFile";
+
+                        // Append the anchor element to the body (it does not have to be visible)
+                        document.body.appendChild(anchorElement);
+
+                        // Programmatically click the anchor to trigger the download
+                        anchorElement.click();
+
+                        // Remove the anchor element after triggering the download
+                        document.body.removeChild(anchorElement);
+                    };
+
+                    // Call the function with the download link
+                    triggerDownload(responseLink);
+
+                    break;
+                    
+                default:
+                    // It's a good practice to handle unexpected cases
+                    console.log("Received an unknown mode:", responseMode);
+            }
+        })
     }
 
     /**

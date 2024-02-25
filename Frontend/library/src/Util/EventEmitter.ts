@@ -358,6 +358,21 @@ export class StreamerListMessageEvent extends Event {
 }
 
 /**
+ * An event that is emitted when a subscribed to streamer's id changes.
+ */
+export class StreamerIDChangedMessageEvent extends Event {
+    readonly type: 'streamerIDChangedMessage';
+    readonly data: {
+        /** The new ID of the streamer. */
+        newID: string;
+    };
+    constructor(data: StreamerIDChangedMessageEvent['data']) {
+        super('StreamerIDChangedMessage');
+        this.data = data;
+    }
+}
+
+/**
  * An event that is emitted when receiving latency test results.
  */
 export class LatencyTestResultEvent extends Event {
@@ -522,6 +537,16 @@ export class PlayerCountEvent extends Event {
     }
 }
 
+/**
+ * An event that is emitted when the webRTC connections is relayed over TCP.
+ */
+export class WebRtcTCPRelayDetectedEvent extends Event {
+    readonly type: 'webRtcTCPRelayDetected';
+    constructor() {
+        super('webRtcTCPRelayDetected');
+    }
+}
+
 export type PixelStreamingEvent =
     | AfkWarningActivateEvent
     | AfkWarningUpdateEvent
@@ -549,6 +574,7 @@ export type PixelStreamingEvent =
     | HideFreezeFrameEvent
     | StatsReceivedEvent
     | StreamerListMessageEvent
+    | StreamerIDChangedMessageEvent
     | LatencyTestResultEvent
     | DataChannelLatencyTestResponseEvent
     | DataChannelLatencyTestResultEvent
@@ -557,7 +583,8 @@ export type PixelStreamingEvent =
     | XrSessionStartedEvent
     | XrSessionEndedEvent
     | XrFrameEvent
-    | PlayerCountEvent;
+    | PlayerCountEvent
+    | WebRtcTCPRelayDetectedEvent;
 
 export class EventEmitter extends EventTarget {
     /**
